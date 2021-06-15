@@ -1,0 +1,7 @@
+#config下的配置文件优先级高于resources的，文件夹一定要叫config才有用
+server:
+  port: 9520
+  servlet:
+    context-path: /wiki
+
+demo: demo
