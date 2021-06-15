@@ -1,0 +1,3 @@
+GET http://localhost:9520/wiki/hello
+Accept: text/html,application/json
+###

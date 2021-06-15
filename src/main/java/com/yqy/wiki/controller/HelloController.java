@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
     //有则取demo,没有则取默认值DEMO
-    @Value("${demo:DEMO}")
+    @Value("${hello:DEMO}")
     private String demo;
 
     @GetMapping("/hello")
