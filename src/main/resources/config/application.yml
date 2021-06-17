@@ -3,5 +3,12 @@ server:
   port: 9520
   servlet:
     context-path: /wiki
-
 demo: demo
+spring:
+  datasource:
+    url: jdbc:mysql://47.114.63.55:3306/db_wiki?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: QAZwsx123
+    driver-class-name: com.mysql.jdbc.Driver
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml

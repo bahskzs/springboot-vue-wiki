@@ -1,3 +1,6 @@
 GET http://localhost:9520/wiki/hello
 Accept: text/html,application/json
 ###
+
+
+GET http://localhost:9520/wiki/ebook/list
