@@ -3,4 +3,4 @@ Accept: text/html,application/json
 ###
 
 
-GET http://localhost:9520/wiki/ebook/list
+GET http://localhost:9520/wiki/ebook/list?name=Spring

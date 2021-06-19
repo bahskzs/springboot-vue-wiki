@@ -1,0 +1,17 @@
+2021-06-17 22:18:23.386 INFO  com.yqy.wiki.WikiApplication                      :55   [32m                  [0;39m Starting WikiApplication using Java 1.8.0_271 on Orange-Cat with PID 18920 (G:\Springboot-vue-wiki\wiki\target\classes started by bahsk in G:\Springboot-vue-wiki\wiki)
+2021-06-17 22:18:23.390 INFO  com.yqy.wiki.WikiApplication                      :659  [32m                  [0;39m No active profile set, falling back to default profiles: default
+2021-06-17 22:18:23.456 INFO  o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor :255  [32m                  [0;39m Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-06-17 22:18:23.457 INFO  o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor :255  [32m                  [0;39m For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-06-17 22:18:24.070 WARN  org.mybatis.spring.mapper.ClassPathMapperScanner  :44   [32m                  [0;39m No MyBatis mapper was found in '[com.yqy.wiki]' package. Please check your configuration.
+2021-06-17 22:18:24.409 INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer      :108  [32m                  [0;39m Tomcat initialized with port(s): 9520 (http)
+2021-06-17 22:18:24.416 INFO  org.apache.coyote.http11.Http11NioProtocol        :173  [32m                  [0;39m Initializing ProtocolHandler ["http-nio-9520"]
+2021-06-17 22:18:24.417 INFO  org.apache.catalina.core.StandardService          :173  [32m                  [0;39m Starting service [Tomcat]
+2021-06-17 22:18:24.418 INFO  org.apache.catalina.core.StandardEngine           :173  [32m                  [0;39m Starting Servlet engine: [Apache Tomcat/9.0.46]
+2021-06-17 22:18:24.489 INFO  o.a.c.c.ContainerBase.[Tomcat].[localhost].[/wiki]:173  [32m                  [0;39m Initializing Spring embedded WebApplicationContext
+2021-06-17 22:18:24.490 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext    :290  [32m                  [0;39m Root WebApplicationContext: initialization completed in 1032 ms
+2021-06-17 22:18:24.850 INFO  com.zaxxer.hikari.HikariDataSource                :110  [32m                  [0;39m HikariPool-1 - Starting...
+2021-06-17 22:18:25.522 INFO  com.zaxxer.hikari.HikariDataSource                :123  [32m                  [0;39m HikariPool-1 - Start completed.
+2021-06-17 22:18:25.568 INFO  o.s.b.d.autoconfigure.OptionalLiveReloadServer    :58   [32m                  [0;39m LiveReload server is running on port 35729
+2021-06-17 22:18:25.584 INFO  org.apache.coyote.http11.Http11NioProtocol        :173  [32m                  [0;39m Starting ProtocolHandler ["http-nio-9520"]
+2021-06-17 22:18:25.600 INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer      :220  [32m                  [0;39m Tomcat started on port(s): 9520 (http) with context path '/wiki'
+2021-06-17 22:18:25.611 INFO  com.yqy.wiki.WikiApplication                      :61   [32m                  [0;39m Started WikiApplication in 2.625 seconds (JVM running for 3.286)
