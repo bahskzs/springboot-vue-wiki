@@ -77,19 +77,19 @@ import axios from "axios";
 
 export default defineComponent({
 
-  // components: {
-  //   UserOutlined,
-  //   LaptopOutlined,
-  //   NotificationOutlined,
-  //
-  // },
+  components: {
+    UserOutlined,
+    LaptopOutlined,
+    NotificationOutlined,
+
+  },
   setup() {
 
     const ebooks = ref();
 
     onMounted(() => {
 
-      axios.get("http://localhost:9520/wiki/ebook/list?name=Spring").then(
+      axios.get("/wiki/ebook/list?name=Spring").then(
           (response)=>{
             console.log(response);
             const data = response.data;
