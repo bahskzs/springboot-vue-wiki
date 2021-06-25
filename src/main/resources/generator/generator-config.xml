@@ -42,7 +42,7 @@
                              type="XMLMAPPER"/>
 
         <!--<table tableName="demo" domainObjectName="Demo"/>-->
-        <table tableName="ebook"/>
+        <table tableName="t_chart" domainObjectName="ChartData"/>
         <!--<table tableName="category"/>-->
         <!--<table tableName="doc"/>-->
         <!--<table tableName="content"/>-->
