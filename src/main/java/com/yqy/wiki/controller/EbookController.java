@@ -2,6 +2,7 @@ package com.yqy.wiki.controller;
 
 import com.yqy.wiki.domain.Ebook;
 import com.yqy.wiki.resp.CommonResp;
+import com.yqy.wiki.resp.PageResp;
 import com.yqy.wiki.service.EBookService;
 import com.yqy.wiki.vo.EbookVO;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +30,8 @@ public class EbookController {
     //Spring会自动将参数映射到类属性
     //这是spring的什么特性？
     public CommonResp list(EbookVO ebookVO) {
-        CommonResp<List<EbookVO>> listCommonResp = new CommonResp<>();
-        List<EbookVO> list = eBookService.list(ebookVO);
+        CommonResp<PageResp<EbookVO>> listCommonResp = new CommonResp<>();
+        PageResp<EbookVO> list = eBookService.list(ebookVO);
         listCommonResp.setContent(list);
         return listCommonResp;
     }

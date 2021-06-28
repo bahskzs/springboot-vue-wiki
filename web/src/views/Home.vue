@@ -57,7 +57,7 @@
             <template #title>
               <a :href="item.href">{{ item.name }}</a>
             </template>
-<!--            <template #avatar><a-avatar :src="item.avatar" /></template>-->
+            <template #avatar><a-avatar :src="item.cover" /></template>
           </a-list-item-meta>
         </a-list-item>
       </template>
@@ -89,11 +89,11 @@ export default defineComponent({
 
     onMounted(() => {
 
-      axios.get("/wiki/ebook/list?name=Spring").then(
+      axios.get("/ebook/list").then(
           (response)=>{
 
             const data = response.data;
-            ebooks.value = data.content;
+            ebooks.value = data.content.list;
       });
     });
     return {
@@ -114,5 +114,17 @@ export default defineComponent({
   line-height: 50px;
   border-radius: 8%;
   margin: 5px 0;
+}
+.logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+
+.site-layout-background {
+  background: #fff;
 }
 </style>

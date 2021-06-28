@@ -1,12 +1,17 @@
 package com.yqy.wiki.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yqy.wiki.domain.Ebook;
 import com.yqy.wiki.domain.EbookExample;
 import com.yqy.wiki.mapper.EbookMapper;
+import com.yqy.wiki.resp.PageResp;
 import com.yqy.wiki.util.CopyUtil;
 import com.yqy.wiki.vo.EbookVO;
+import com.yqy.wiki.vo.PageVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -30,13 +35,20 @@ public class EBookService {
       * @params: String name
       * @return: List<Ebook>
       */
-    public List<EbookVO> list(EbookVO ebookVO) {
+    public PageResp<EbookVO> list(EbookVO ebookVO) {
         EbookExample ebookExample = new EbookExample();
-        //类似一个where子句
-        EbookExample.Criteria criteria = ebookExample.createCriteria();
-        criteria.andNameLike("%" + ebookVO.getName() + "%");
-        List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
+        List<Ebook> ebookList = new ArrayList<>();
 
+        //类似一个where子句
+        if(StringUtils.hasLength(ebookVO.getName())) {
+            EbookExample.Criteria criteria = ebookExample.createCriteria();
+            criteria.andNameLike("%" + ebookVO.getName() + "%");
+            PageHelper.startPage(ebookVO.getPage(),ebookVO.getSize());
+            ebookList = ebookMapper.selectByExample(ebookExample);
+        }else{
+            PageHelper.startPage(ebookVO.getPage(),ebookVO.getSize());
+            ebookList = ebookMapper.selectByExample(null);
+        }
         //传统写法 ： 将List<Ebook> 变为 List<EbookVO> 需要用到循环 --> CopyUtil
 //        List<EbookVO> ebookVOList = new ArrayList<>();
 //        for(Ebook ebook : ebookList) {
@@ -51,8 +63,12 @@ public class EBookService {
 //            ebookVOList.add(vo);
 //        }
         // 采用可以复制List的工具类优化
-        List<EbookVO> ebookVOList = CopyUtil.copyList(ebookList,EbookVO.class);
-        return ebookVOList;
+        PageResp<EbookVO> ebookVOPageResp = new PageResp<>();
+        PageInfo<EbookVO> ebookVOPageInfo = new PageInfo<>((List)ebookList);
+
+        ebookVOPageResp.setTotal(ebookVOPageInfo.getTotal());
+        ebookVOPageResp.setList(CopyUtil.copyList(ebookList,EbookVO.class));
+        return ebookVOPageResp;
     }
 
      /**
