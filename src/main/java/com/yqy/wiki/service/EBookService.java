@@ -5,12 +5,15 @@ import com.github.pagehelper.PageInfo;
 import com.yqy.wiki.domain.Ebook;
 import com.yqy.wiki.domain.EbookExample;
 import com.yqy.wiki.mapper.EbookMapper;
+import com.yqy.wiki.resp.CommonResp;
+import com.yqy.wiki.resp.EbookQueryResp;
 import com.yqy.wiki.resp.PageResp;
 import com.yqy.wiki.util.CopyUtil;
-import com.yqy.wiki.vo.EbookVO;
-import com.yqy.wiki.vo.PageVO;
-import org.springframework.beans.BeanUtils;
+import com.yqy.wiki.util.SnowFlake;
+import com.yqy.wiki.vo.EbookQueryVO;
+import com.yqy.wiki.vo.EbookSaveVO;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -28,6 +31,9 @@ public class EBookService {
     @Resource
     private EbookMapper ebookMapper;
 
+    @Resource
+    private SnowFlake snowFlake;
+
      /**
       * @author: bahsk
       * @date: 2021/6/18 21:47
@@ -35,18 +41,18 @@ public class EBookService {
       * @params: String name
       * @return: List<Ebook>
       */
-    public PageResp<EbookVO> list(EbookVO ebookVO) {
+    public PageResp<EbookQueryResp> list(EbookQueryVO ebookQueryVO) {
         EbookExample ebookExample = new EbookExample();
         List<Ebook> ebookList = new ArrayList<>();
 
         //类似一个where子句
-        if(StringUtils.hasLength(ebookVO.getName())) {
+        if(StringUtils.hasLength(ebookQueryVO.getName())) {
             EbookExample.Criteria criteria = ebookExample.createCriteria();
-            criteria.andNameLike("%" + ebookVO.getName() + "%");
-            PageHelper.startPage(ebookVO.getPage(),ebookVO.getSize());
+            criteria.andNameLike("%" + ebookQueryVO.getName() + "%");
+            PageHelper.startPage(ebookQueryVO.getPage(), ebookQueryVO.getSize());
             ebookList = ebookMapper.selectByExample(ebookExample);
         }else{
-            PageHelper.startPage(ebookVO.getPage(),ebookVO.getSize());
+            PageHelper.startPage(ebookQueryVO.getPage(), ebookQueryVO.getSize());
             ebookList = ebookMapper.selectByExample(null);
         }
         //传统写法 ： 将List<Ebook> 变为 List<EbookVO> 需要用到循环 --> CopyUtil
@@ -63,11 +69,11 @@ public class EBookService {
 //            ebookVOList.add(vo);
 //        }
         // 采用可以复制List的工具类优化
-        PageResp<EbookVO> ebookVOPageResp = new PageResp<>();
-        PageInfo<EbookVO> ebookVOPageInfo = new PageInfo<>((List)ebookList);
+        PageResp<EbookQueryResp> ebookVOPageResp = new PageResp<>();
+        PageInfo<EbookQueryResp> ebookVOPageInfo = new PageInfo<>((List)ebookList);
 
         ebookVOPageResp.setTotal(ebookVOPageInfo.getTotal());
-        ebookVOPageResp.setList(CopyUtil.copyList(ebookList,EbookVO.class));
+        ebookVOPageResp.setList(CopyUtil.copyList(ebookList, EbookQueryResp.class));
         return ebookVOPageResp;
     }
 
@@ -82,4 +88,46 @@ public class EBookService {
         return ebookMapper.selectByExample(null);
     }
 
+
+
+     /**
+      * @author: bahsk
+      * @date: 2021/6/29 22:04
+      * @description: 保存
+      * @params:
+      * @return:
+      */
+    public CommonResp save(EbookSaveVO ebookSaveVO) {
+        Ebook ebook = CopyUtil.copy(ebookSaveVO, Ebook.class);
+        CommonResp commonResp = new CommonResp();
+        int flag = 0;
+        if (ObjectUtils.isEmpty(ebook.getId())){
+            ebook.setId(snowFlake.nextId());
+            flag = ebookMapper.insert(ebook);
+        }else{
+            flag = ebookMapper.updateByPrimaryKey(ebook);
+        }
+        if(flag == 0){
+            commonResp.setSuccess(false);
+        }
+        return commonResp;
+    }
+
+     /**
+      * @author: bahsk
+      * @date: 2021/6/29 23:11
+      * @description: 删除
+      * @params:
+      * @return:
+      */
+    public CommonResp delete(Long id) {
+
+        CommonResp commonResp = new CommonResp();
+        int flag = 0;
+        flag = ebookMapper.deleteByPrimaryKey(id);
+        if(flag == 0){
+            commonResp.setSuccess(false);
+        }
+        return commonResp;
+    }
 }

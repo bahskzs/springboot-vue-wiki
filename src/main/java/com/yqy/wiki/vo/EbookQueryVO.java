@@ -5,7 +5,7 @@ package com.yqy.wiki.vo;
  * @createTime 2021-06-18 21:55
  * @description
  */
-public class EbookVO extends PageVO{
+public class EbookQueryVO extends PageVO{
 
     private Long id;
 
