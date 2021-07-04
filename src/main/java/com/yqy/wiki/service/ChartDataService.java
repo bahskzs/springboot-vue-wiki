@@ -4,7 +4,7 @@ import com.yqy.wiki.domain.ChartData;
 import com.yqy.wiki.mapper.ChartDataMapper;
 import com.yqy.wiki.resp.CommonResp;
 import com.yqy.wiki.util.CopyUtil;
-import com.yqy.wiki.vo.ChartDataVO;
+import com.yqy.wiki.req.ChartDataReq;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -30,12 +30,12 @@ public class ChartDataService {
      * @return: com.yqy.wiki.resp.CommonResp<java.util.List<com.yqy.wiki.vo.ChartDataVO>>
      * @Version: 1.0
      */
-    public CommonResp<List<ChartDataVO>> query() {
+    public CommonResp<List<ChartDataReq>> query() {
 
-        CommonResp<List<ChartDataVO>> listCommonResp = new CommonResp<List<ChartDataVO>>();
+        CommonResp<List<ChartDataReq>> listCommonResp = new CommonResp<List<ChartDataReq>>();
         List<ChartData> chartDataList = chartDataMapper.selectByExample(null);
-        List<ChartDataVO> chartDataVOList  = CopyUtil.copyList(chartDataList, ChartDataVO.class);
-        listCommonResp.setContent(chartDataVOList);
+        List<ChartDataReq> chartDataReqList = CopyUtil.copyList(chartDataList, ChartDataReq.class);
+        listCommonResp.setContent(chartDataReqList);
         return listCommonResp;
     }
 

@@ -1,8 +1,7 @@
-package com.yqy.wiki.vo;
+package com.yqy.wiki.req;
 
 
 import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -10,7 +9,7 @@ import javax.validation.constraints.NotNull;
  * @createTime 2021-06-28 22:28
  * @description
  */
-public class PageVO {
+public class PageReq {
 
     @NotNull(message = "【页码】不能为空")
     private int page;

@@ -1,11 +1,11 @@
-package com.yqy.wiki.vo;
+package com.yqy.wiki.req;
 
 /**
  * @author bahsk
  * @createTime 2021-06-25 12:45
  * @description
  */
-public class ChartDataVO {
+public class ChartDataReq {
 
 
     private String name;

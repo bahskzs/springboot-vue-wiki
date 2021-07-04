@@ -33,6 +33,11 @@
       <template #cover="{text:cover}">
         <a-avatar shape="square" :size="32" v-if="cover" :src="cover" alt="" />
       </template>
+      <template #category="{record}">
+        <span>{{ getCategoryName(record.category1Id) }} / {{ getCategoryName(record.category2Id) }}</span>
+        {{ getCategoryName(record.category1Id) }}
+     </template>
+
       <template #action="{ record }">
         <span>
           <a-button type="primary" @click="editModal(record)">编辑</a-button>
@@ -56,11 +61,12 @@
                 <a-form-item label="名称">
                   <a-input v-model:value="ebook.name" />
                 </a-form-item>
-                <a-form-item label="分类一">
-                  <a-input v-model:value="ebook.category1Id" />
-                </a-form-item>
-                <a-form-item label="分类二">
-                  <a-input v-model:value="ebook.category2Id" />
+                <a-form-item label="分类">
+                  <a-cascader
+                      v-model:value="categoryIds"
+                      :field-names="{ label: 'name', value: 'id', children: 'children' }"
+                      :options="level1"
+                  />
                 </a-form-item>
                 <a-form-item label="描述">
                   <a-input v-model:value="ebook.description" type="textarea" />
@@ -113,17 +119,15 @@ export default defineComponent({
       {
         title: '名称',
         dataIndex: 'name',
+        key: 'name'
 
 
       },
       {
-        title: '分类一',
-        dataIndex: 'category1Id',
-
-      },
-      {
-        title: '分类二',
-        dataIndex: 'category2Id',
+        title: '分类',
+        dataIndex: 'category',
+        key: 'category',
+        slots: { customRender: 'category' },
 
       },
       {
@@ -184,6 +188,38 @@ export default defineComponent({
     };
 
     /*
+    * 查询分类
+    * */
+    const level1 = ref();
+    level1.value = [];
+    let categoryData = [];
+    const handleCategoryQuery = () => {
+      loading.value = true;
+      axios.get("/category/all").then(
+          (response)=>{
+            loading.value = false;
+            const data = response.data;
+            if(data.success) {
+
+              const res = data.content;
+              categoryData = data.content;
+              level1.value = [];
+              level1.value = Tool.array2Tree(res, 0);
+
+              //categoryRes.value = toTree(res);
+              handleQuery({
+                page : 1,
+                size : pagination.value.pageSize
+              });
+
+            }else {
+              message.error(data.message);
+            }
+
+          });
+    };
+
+    /*
     * 参数查询
     * */
     const paramValue = ref<string>('');
@@ -203,28 +239,45 @@ export default defineComponent({
     }
 
     //模态框相关
-    const ebook = ref({});
+    const ebook = ref();
     const visible = ref<boolean>(false);
     const confirmLoading = ref<boolean>(false);
+    const categoryIds = ref();
 
     //按钮的编辑事件
     const editModal = (record : any) => {
       //打开
       confirmLoading.value = false;
       visible.value = true;
-      const data = record;
+
       //vue使用输入框时，只赋值不双向绑定 Tool.copy 利用 JSON.parse 和 JSON.stringify
       //方法一:
       //ebook.value = Tool.copy(record);
       //方法二: ES6的写法
       ebook.value = {...record}
+      categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id];
+      console.log("categoryIds.value",categoryIds.value);
       //ebook.value = data;
     };
+
+    /*
+    * 获取分类名称
+    * */
+    const getCategoryName = (categoryId : any) => {
+      let result = "";
+      categoryData.forEach((item)=>{
+        if(Number(item.id) === Number(categoryId)){
+          result =  item.name;
+        }
+      });
+      return result;
+    }
 
 
     const handleOk = () => {
       confirmLoading.value = true;
-
+      ebook.value.category1Id = categoryIds.value[0];
+      ebook.value.category2Id = categoryIds.value[1];
       console.log("ebook :",ebook.value);
       axios.post("/ebook/save", ebook.value).then((response) => {
         confirmLoading.value = false;
@@ -270,6 +323,9 @@ export default defineComponent({
             page: pagination.value.current,
             size: pagination.value.pageSize,
           });
+        }else{
+          //如果返回异常则返回错误提示
+          message.error(data.message);
         }
       });
 
@@ -277,10 +333,8 @@ export default defineComponent({
 
 
     onMounted(()=>{
-      handleQuery({
-        page : 1,
-        size : pagination.value.pageSize
-      });
+      handleCategoryQuery();
+
     });
 
     return {
@@ -289,11 +343,14 @@ export default defineComponent({
       pagination,
       loading,
       handleTableChange,
+      level1,
+      categoryIds,
 
       ebook,
       visible,
       confirmLoading,
       editModal,
+      getCategoryName,
       handleOk,
 
       add,

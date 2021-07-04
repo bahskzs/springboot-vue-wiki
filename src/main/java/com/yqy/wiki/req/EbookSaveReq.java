@@ -1,14 +1,12 @@
-package com.yqy.wiki.vo;
+package com.yqy.wiki.req;
 
-/**
- * @author bahsk
- * @createTime 2021-06-18 21:55
- * @description
- */
-public class EbookQueryVO extends PageVO{
 
+import javax.validation.constraints.NotNull;
+
+public class EbookSaveReq {
     private Long id;
 
+    @NotNull(message = "【名称】不能为空")
     private String name;
 
     private Long category1Id;

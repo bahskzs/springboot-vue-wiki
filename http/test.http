@@ -3,7 +3,7 @@ Accept: text/html,application/json
 ###
 
 
-GET http://localhost:9520/wiki/ebook/list?page=-1&size=1001
+GET http://localhost:9520/wiki/ebook/list?categoryId2 = 101
 
 ###
 //不带参数就是类似等同于page=0,怎么论证 ？ 如果将page加上Min(value=1),运行下边测试脚本
@@ -15,3 +15,8 @@ GET http://localhost:9520/wiki/ebook/list
 
 POST http://localhost:8880/ebook/save
 Content-Type: application/json
+
+###
+
+GET http://localhost:9520/wiki/category/list
+

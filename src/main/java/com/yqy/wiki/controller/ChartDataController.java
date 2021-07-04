@@ -2,7 +2,7 @@ package com.yqy.wiki.controller;
 
 import com.yqy.wiki.resp.CommonResp;
 import com.yqy.wiki.service.ChartDataService;
-import com.yqy.wiki.vo.ChartDataVO;
+import com.yqy.wiki.req.ChartDataReq;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +25,7 @@ public class ChartDataController {
 
 
     @GetMapping("/list")
-    public CommonResp<List<ChartDataVO>> query() {
+    public CommonResp<List<ChartDataReq>> query() {
         return chartDataService.query();
     }
 }

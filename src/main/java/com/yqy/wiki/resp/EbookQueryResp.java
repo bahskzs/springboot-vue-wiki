@@ -3,7 +3,6 @@ package com.yqy.wiki.resp;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.yqy.wiki.vo.PageVO;
 
 /**
  * @author bahsk

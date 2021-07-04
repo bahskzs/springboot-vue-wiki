@@ -4,8 +4,8 @@ import com.yqy.wiki.resp.CommonResp;
 import com.yqy.wiki.resp.EbookQueryResp;
 import com.yqy.wiki.resp.PageResp;
 import com.yqy.wiki.service.EBookService;
-import com.yqy.wiki.vo.EbookQueryVO;
-import com.yqy.wiki.vo.EbookSaveVO;
+import com.yqy.wiki.req.EbookQueryReq;
+import com.yqy.wiki.req.EbookSaveReq;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -28,7 +28,7 @@ public class EbookController {
     //为什么参数是ebookVO ，输入http://localhost:9520/wiki/ebook/list?name=Spring name属性也会被识别？
     //Spring会自动将参数映射到类属性
     //这是spring的什么特性？
-    public CommonResp list(@Valid  EbookQueryVO ebookQueryVO) {
+    public CommonResp list(@Valid EbookQueryReq ebookQueryVO) {
         CommonResp<PageResp<EbookQueryResp>> listCommonResp = new CommonResp<>();
         PageResp<EbookQueryResp> list = eBookService.list(ebookQueryVO);
         listCommonResp.setContent(list);
@@ -36,10 +36,9 @@ public class EbookController {
     }
 
 
-
     @PostMapping("/save")
-    public CommonResp save(@Valid @RequestBody EbookSaveVO ebookSaveVO){
-        CommonResp commonResp = eBookService.save(ebookSaveVO);
+    public CommonResp save(@Valid @RequestBody EbookSaveReq ebookSaveReq){
+        CommonResp commonResp = eBookService.save(ebookSaveReq);
         return  commonResp;
     }
 
@@ -48,4 +47,6 @@ public class EbookController {
         CommonResp commonResp = eBookService.delete(id);
         return  commonResp;
     }
+
+
 }

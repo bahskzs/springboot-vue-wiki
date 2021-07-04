@@ -15,7 +15,7 @@ import java.io.IOException;
  * @description  过滤器记录请求的日志
  */
 
-@Component
+//@Component
 public class LogFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogFilter.class);

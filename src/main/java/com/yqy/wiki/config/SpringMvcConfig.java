@@ -12,7 +12,7 @@ import javax.annotation.Resource;
  * @createTime 2021-06-24 20:06
  * @description
  */
-@Configuration
+//@Configuration
 public class SpringMvcConfig implements WebMvcConfigurer {
 
         @Resource

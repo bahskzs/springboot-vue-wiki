@@ -10,8 +10,8 @@ import com.yqy.wiki.resp.EbookQueryResp;
 import com.yqy.wiki.resp.PageResp;
 import com.yqy.wiki.util.CopyUtil;
 import com.yqy.wiki.util.SnowFlake;
-import com.yqy.wiki.vo.EbookQueryVO;
-import com.yqy.wiki.vo.EbookSaveVO;
+import com.yqy.wiki.req.EbookQueryReq;
+import com.yqy.wiki.req.EbookSaveReq;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -41,19 +41,26 @@ public class EBookService {
       * @params: String name
       * @return: List<Ebook>
       */
-    public PageResp<EbookQueryResp> list(EbookQueryVO ebookQueryVO) {
+    public PageResp<EbookQueryResp> list(EbookQueryReq ebookQueryVO) {
         EbookExample ebookExample = new EbookExample();
+        EbookExample.Criteria criteria = ebookExample.createCriteria();
         List<Ebook> ebookList = new ArrayList<>();
 
         //类似一个where子句
         if(StringUtils.hasLength(ebookQueryVO.getName())) {
-            EbookExample.Criteria criteria = ebookExample.createCriteria();
+
             criteria.andNameLike("%" + ebookQueryVO.getName() + "%");
+            if (!ObjectUtils.isEmpty(ebookQueryVO.getCategory2Id())) {
+                criteria.andCategory2IdEqualTo(ebookQueryVO.getCategory2Id());
+            }
             PageHelper.startPage(ebookQueryVO.getPage(), ebookQueryVO.getSize());
             ebookList = ebookMapper.selectByExample(ebookExample);
         }else{
+            if (!ObjectUtils.isEmpty(ebookQueryVO.getCategory2Id())) {
+                criteria.andCategory2IdEqualTo(ebookQueryVO.getCategory2Id());
+            }
             PageHelper.startPage(ebookQueryVO.getPage(), ebookQueryVO.getSize());
-            ebookList = ebookMapper.selectByExample(null);
+            ebookList = ebookMapper.selectByExample(ebookExample);
         }
         //传统写法 ： 将List<Ebook> 变为 List<EbookVO> 需要用到循环 --> CopyUtil
 //        List<EbookVO> ebookVOList = new ArrayList<>();
@@ -97,8 +104,8 @@ public class EBookService {
       * @params:
       * @return:
       */
-    public CommonResp save(EbookSaveVO ebookSaveVO) {
-        Ebook ebook = CopyUtil.copy(ebookSaveVO, Ebook.class);
+    public CommonResp save(EbookSaveReq ebookSaveReq) {
+        Ebook ebook = CopyUtil.copy(ebookSaveReq, Ebook.class);
         CommonResp commonResp = new CommonResp();
         int flag = 0;
         if (ObjectUtils.isEmpty(ebook.getId())){

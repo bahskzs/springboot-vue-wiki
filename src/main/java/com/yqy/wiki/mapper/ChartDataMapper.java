@@ -3,11 +3,8 @@ package com.yqy.wiki.mapper;
 import com.yqy.wiki.domain.ChartData;
 import com.yqy.wiki.domain.ChartDataExample;
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-@Mapper
 public interface ChartDataMapper {
     long countByExample(ChartDataExample example);
 
