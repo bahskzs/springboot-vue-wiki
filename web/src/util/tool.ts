@@ -56,25 +56,60 @@ export class Tool {
    * 使用递归将将传入的节点的所有子节点查出
    *  查询传入节点的全部子节点
    */
-  public static  findChildrenNode(tree:any,parentID:number) {
+  public static findChildrenNode(treeNode: Array<string>, tree: Array<any>, currentId: number) {
 
-    const result = [];
-    tree.forEach((item)=>{
-      if(Number(item.parent) === Number(parentID)) {
-        result.push(item.id);
+      tree.forEach((node) => {
+          if (node.id === currentId) {
+              //刚好找到
+              treeNode.push(node.id);
+
+              if (Tool.isNotEmpty(node.children)) {
+                  node.children.forEach((child) => {
+                      Tool.findChildrenNode(treeNode, node.children, child.id);
+                  });
+              }
+
+          } else {
+              if (Tool.isNotEmpty(node.children)) {
+                  Tool.findChildrenNode(treeNode, node.children, currentId);
+              }
+          }
+
+      });
 
 
-        const res = Tool.findChildrenNode(tree,item.id);
-        if(Tool.isNotEmpty(res)){
-          result.concat(res);
-        }
-      }
-    });
-
-    return result;
   }
 
+    /**
+     * @author: bahsk
+     * @date: 2021/7/4 23:19
+     * @description: 根据传入的tree,id 查出一整颗子树，并设置相应的属性
+     * @params: tree, id
+     * @return:
+     */
+    public static findChildrenTree(tree: Array<any>, currentId: number) {
 
+        tree.forEach((node) => {
+            if (node.id === currentId) {
+                //刚好找到
+                node.disabled = true;
+
+                if (Tool.isNotEmpty(node.children)) {
+                    node.children.forEach((child) => {
+                        Tool.findChildrenTree(node.children, child.id);
+                    })
+
+                }
+
+            } else {
+                if (Tool.isNotEmpty(node.children)) {
+                    Tool.findChildrenTree(node.children, currentId);
+                }
+            }
+
+        });
+
+    }
 
 
 }

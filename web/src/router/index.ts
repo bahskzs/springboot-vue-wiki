@@ -1,7 +1,8 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/Home.vue'
-import AdminEbook from '../views/admin/AdminEbook.vue'
-import AdminCategory from '../views/admin/AdminCategory.vue'
+import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router';
+import Home from '../views/Home.vue';
+import AdminEbook from '../views/admin/AdminEbook.vue';
+import AdminCategory from '../views/admin/AdminCategory.vue';
+import AdminDoc from '../views/admin/AdminDoc.vue';
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -53,18 +54,34 @@ const routes: Array<RouteRecordRaw> = [
     component: AdminCategory
   },
   {
-    path: '/tree',
-    name: 'Tree',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/admin/Tree.vue')
+    path: '/admin/doc',
+    name: 'AdminDoc',
+    component: AdminDoc
+  }, {
+    path: '/admin/Demo',
+    name: 'Demo',
+    component: () => import(/* webpackChunkName: "about" */ '../views/admin/Demo.vue')
   },
-]
+  {
+    path: '/md/simple/demo',
+    name: 'SimpleMDE',
+    component: () => import(/* webpackChunkName: "about" */ '../views/md/SimpleMDEDemo.vue')
+  },
+  {
+    path: '/md/stack/demo',
+    name: 'StackEdit',
+    component: () => import(/* webpackChunkName: "about" */ '../views/md/MaveonEditor.vue')
+  },
+  {
+    path: '/doc',
+    name: 'doc',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Doc.vue')
+  }
+];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
-})
+});
 
 export default router

@@ -8,6 +8,7 @@
     </a-button>
   </p>
   <a-table
+      :row-key="record => record.id"
       :columns="columns"
       :data-source="level1"
       :pagination="false"
@@ -16,7 +17,7 @@
       <span>
           <a-button type="primary" @click="editModal(record)">编辑</a-button>
         <a-modal
-            title="电子书明细"
+            title="分类明细"
             v-model:visible="visible"
             :confirm-loading="confirmLoading"
             @ok="handleOk"
@@ -109,25 +110,6 @@ export default defineComponent({
     const level1 = ref();
     level1.value = [];
 
-    // const toTree = (data : any) => {
-    //   const result =[];
-    //   data.forEach((item) => {
-    //     delete item.children;
-    //   });
-    //   const map = {};
-    //   data.forEach((item) => {
-    //     map[item.id] = item;
-    //   });
-    //   data.forEach((item) => {
-    //     const parent = map[item.parent];
-    //     if (parent) {
-    //       (parent.children || (parent.children = [])).push(item);
-    //     } else {
-    //       result.push(item);
-    //     }
-    //   });
-    //   return result;
-    // }
 
     /**
      * 数据查询

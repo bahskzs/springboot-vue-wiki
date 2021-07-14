@@ -40,7 +40,11 @@
 
       <template #action="{ record }">
         <span>
-          <a-button type="primary" @click="editModal(record)">编辑</a-button>
+          <router-link :to="'/admin/doc?ebookId='+record.id">
+            <a-button type="primary" shape="round">文档管理</a-button>
+          </router-link>
+          <a-divider type="vertical"/>
+          <a-button type="primary" @click="editModal(record)" shape="round">编辑</a-button>
           <a-modal
               title="电子书明细"
               v-model:visible="visible"
@@ -82,7 +86,7 @@
               cancel-text="否"
               @confirm="handleDelete(record.id)"
           >
-            <a-button type="danger" >删除</a-button>
+            <a-button type="danger" shape="round">删除</a-button>
           </a-popconfirm>
         </span>
       </template>
