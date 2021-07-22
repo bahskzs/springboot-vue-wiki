@@ -85,7 +85,7 @@ public class DocService {
      * @params:
      * @return:
      */
-    //TODO 需要改造下返回的内容,要包含Content相关的内容
+
     public List<DocQueryResp> all(Long ebookId) {
 
         DocExample docExample = new DocExample();
@@ -107,7 +107,7 @@ public class DocService {
      * @params:
      * @return:
      */
-    //TODO 研究一下CopyUtil是怎么指定字段拷贝的 DONE 已经了解还是调用spring自带的方法
+
     public CommonResp save(DocSaveReq docSaveReq) {
         Doc doc = CopyUtil.copy(docSaveReq, Doc.class);
         Content content = CopyUtil.copy(docSaveReq, Content.class);
@@ -165,6 +165,11 @@ public class DocService {
 
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
-        return content.getContent();
+        //return content.getContent();  直接返回如果没有内容会报空指针异常
+        if (ObjectUtils.isEmpty(content)) {
+            return "";
+        } else {
+            return content.getContent();
+        }
     }
 }

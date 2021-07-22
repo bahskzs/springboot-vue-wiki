@@ -304,7 +304,6 @@ export default defineComponent({
 
     const handlePreviewContent = () => {
       drawerVisible.value = true;
-      //TODO 请求后端的Content接口并返回html相关内容
       previewHtml.value = editor.txt.html();
     }
 
@@ -398,4 +397,10 @@ export default defineComponent({
   margin: 10px 0 10px 20px;
 }
 
+.wangeditor blockquote p {
+  font-family: "YouYuan";
+  margin: 20px 10px !important;
+  font-size: 16px !important;
+  font-weight: 600;
+}
 </style>

@@ -9,6 +9,7 @@
                   :replaceFields="{title:'name', key:'id', value: 'id'}"
                   :defaultExpandAll="true"
                   @select="onSelect"
+                  :defaultSelectedeKey="defaultSelectedKey"
           >
 
           </a-tree>
@@ -39,26 +40,10 @@ export default defineComponent({
     const level1 = ref();
     level1.value = [];
 
-    /**
-     * 左侧目录树
-     **/
-    const handleQuery = () => {
-      axios.get("/doc/all/" + route.query.ebookId).then(
-          (response) => {
-            const data = response.data;
-            if (data.success) {
+    //初始化定义选择的节点
+    const defaultSelectedKey = ref();
+    defaultSelectedKey.value = [];
 
-              const res = data.content;
-
-              level1.value = [];
-              level1.value = Tool.array2Tree(res, 0);
-
-            } else {
-              message.error(data.message);
-            }
-
-          });
-    };
 
     /**
      * @author: bahsk
@@ -102,6 +87,32 @@ export default defineComponent({
     };
 
 
+    /**
+     * 左侧目录树
+     **/
+    const handleQuery = () => {
+      axios.get("/doc/all/" + route.query.ebookId).then(
+          (response) => {
+            const data = response.data;
+            if (data.success) {
+
+              const res = data.content;
+
+              level1.value = [];
+              level1.value = Tool.array2Tree(res, 0);
+
+              if (Tool.isNotEmpty(level1)) {
+                defaultSelectedKey.value = [level1.value[0].id];
+                handleQueryContent(level1.value[0].id);
+              }
+
+            } else {
+              message.error(data.message);
+            }
+
+          });
+    };
+
     onMounted(() => {
       handleQuery();
     });
@@ -109,7 +120,8 @@ export default defineComponent({
     return {
       content,
       level1,
-      onSelect
+      onSelect,
+      defaultSelectedKey
 
 
     }
