@@ -103,13 +103,14 @@ import {Tool} from "@/util/tool";
 
 
 export default defineComponent({
+  name: 'AdminEbook',
   setup() {
 
     const loading = ref(false);
     const pagination = ref({
-      current : 1,
-      pageSize : 10,
-      total : 0
+      current: 1,
+      pageSize: 10,
+      total: 0
     });
 
     const columns = [
