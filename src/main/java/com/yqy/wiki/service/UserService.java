@@ -8,6 +8,7 @@ import com.yqy.wiki.exception.BusinessException;
 import com.yqy.wiki.exception.BusinessExceptionCode;
 import com.yqy.wiki.mapper.UserMapper;
 import com.yqy.wiki.req.UserQueryReq;
+import com.yqy.wiki.req.UserResetPasswordReq;
 import com.yqy.wiki.req.UserSaveReq;
 import com.yqy.wiki.resp.CommonResp;
 import com.yqy.wiki.resp.UserQueryResp;
@@ -113,6 +114,7 @@ public class UserService {
             //防止登录名称被修改的办法  将loginName置空 + updateByPrimaryKeySelective 有值才更新
 //            flag = userMapper.updateByPrimaryKey(user);
             user.setLoginName(null);
+            user.setPassword(null);
             flag = userMapper.updateByPrimaryKeySelective(user);
         }
 //        if(flag == 0){
@@ -158,5 +160,10 @@ public class UserService {
             return users.get(0);
         }
 
+    }
+
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        userMapper.updateByPrimaryKeySelective(user);
     }
 }

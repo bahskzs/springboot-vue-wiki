@@ -2,11 +2,13 @@ package com.yqy.wiki.controller;
 
 import com.yqy.wiki.req.EbookSaveReq;
 import com.yqy.wiki.req.UserQueryReq;
+import com.yqy.wiki.req.UserResetPasswordReq;
 import com.yqy.wiki.req.UserSaveReq;
 import com.yqy.wiki.resp.CommonResp;
 import com.yqy.wiki.resp.UserQueryResp;
 import com.yqy.wiki.resp.PageResp;
 import com.yqy.wiki.service.UserService;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,6 +39,7 @@ public class UserController {
 
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody UserSaveReq userSaveReq) {
+        userSaveReq.setPassword(DigestUtils.md5DigestAsHex(userSaveReq.getPassword().getBytes()));
         CommonResp commonResp = userService.save(userSaveReq);
         return commonResp;
     }
@@ -44,6 +47,21 @@ public class UserController {
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable Long id) {
         CommonResp commonResp = userService.delete(id);
+        return commonResp;
+    }
+
+    /**
+     * @author: bahsk
+     * @date: 2021/7/26 20:24
+     * @description: 重置密码
+     * @params:
+     * @return:
+     */
+    @PostMapping("/reset-password")
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp commonResp = new CommonResp<>();
+        userService.resetPassword(req);
         return commonResp;
     }
 }

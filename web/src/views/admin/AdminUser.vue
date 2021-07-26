@@ -34,6 +34,31 @@
 
         <template #action="{ record }">
         <span>
+
+          <a-button type="primary" @click="editResetModal(record)" shape="round">重置密码</a-button>
+          <a-modal
+              title="重置密码"
+              v-model:visible="resetVisible"
+              :confirm-loading="resetConfirmLoading"
+              @ok="handleResetOk"
+              okText="确定"
+              cancelText="取消"
+          >
+
+        <a-form
+            :model="user"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+        >
+          <!--user.id 不存在的时候就现实-->
+          <a-form-item label="密码">
+            <a-input v-model:value="user.password"/>
+          </a-form-item>
+        </a-form>
+
+
+      </a-modal>
+          <a-divider type="vertical"/>
           <a-button type="primary" @click="editModal(record)" shape="round">编辑</a-button>
           <a-modal
               title="用户明细"
@@ -55,13 +80,16 @@
                 <a-form-item label="名称">
                   <a-input v-model:value="user.name"/>
                 </a-form-item>
-                <a-form-item label="密码">
+                <!--user.id 不存在的时候就现实-->
+                <a-form-item label="密码" v-show="!user.id">
                   <a-input v-model:value="user.password"/>
                 </a-form-item>
               </a-form>
 
 
           </a-modal>
+
+
           <a-divider type="vertical"/>
           <a-popconfirm
               title="删除后不可恢复,确认删除"
@@ -74,6 +102,7 @@
         </span>
         </template>
       </a-table>
+
     </a-config-provider>
   </a-layout-content>
 </template>
@@ -83,6 +112,9 @@ import {defineComponent, onMounted, ref} from 'vue';
 import axios from "axios";
 import {message} from "ant-design-vue";
 import {Tool} from "@/util/tool";
+
+declare let hexMd5: any;
+declare let KEY: any;
 
 
 export default defineComponent({
@@ -171,7 +203,7 @@ export default defineComponent({
     const user = ref();
     const visible = ref<boolean>(false);
     const confirmLoading = ref<boolean>(false);
-    const categoryIds = ref();
+
 
     //按钮的编辑事件
     const editModal = (record: any) => {
@@ -185,14 +217,13 @@ export default defineComponent({
       //方法二: ES6的写法
       user.value = {...record}
 
-      console.log("categoryIds.value", categoryIds.value);
-      //user.value = data;
     };
 
 
     const handleOk = () => {
       confirmLoading.value = true;
       console.log("user :", user.value);
+      user.value.password = hexMd5(user.value.password + KEY)
       axios.post("/user/save", user.value).then((response) => {
         confirmLoading.value = false;
         const data = response.data; // data = commonResp
@@ -247,6 +278,56 @@ export default defineComponent({
     };
 
 
+    /*重置密码*/
+    //模态框相关
+
+    const resetVisible = ref<boolean>(false);
+    const resetConfirmLoading = ref<boolean>(false);
+
+
+    //按钮的编辑事件
+    const editResetModal = (record: any) => {
+      //打开
+      resetConfirmLoading.value = false;
+      resetVisible.value = true;
+
+      //vue使用输入框时，只赋值不双向绑定 Tool.copy 利用 JSON.parse 和 JSON.stringify
+      //方法一:
+      //user.value = Tool.copy(record);
+      //方法二: ES6的写法
+      user.value = {...record}
+      user.value.password = null;
+
+    };
+
+
+    const handleResetOk = () => {
+      resetConfirmLoading.value = true;
+
+      user.value.password = hexMd5(user.value.password + KEY)
+      console.log(user.value);
+      axios.post("/user/reset-password", user.value).then((response) => {
+        resetConfirmLoading.value = false;
+        const data = response.data; // data = commonResp
+
+        if (data.success) {
+          resetVisible.value = false;
+
+
+          // 重新加载列表
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          });
+        } else {
+          //如果返回异常则返回错误提示
+          message.error(data.message);
+        }
+      });
+
+    };
+
+
     onMounted(() => {
       handleQuery({
         page: 1,
@@ -260,7 +341,6 @@ export default defineComponent({
       pagination,
       loading,
       handleTableChange,
-      categoryIds,
 
       user,
       visible,
@@ -276,7 +356,13 @@ export default defineComponent({
       wrapperCol: {span: 14},
 
       onSearch,
-      paramValue
+      paramValue,
+
+      resetVisible,
+      resetConfirmLoading,
+      editResetModal,
+      handleResetOk
+
 
     };
   },
