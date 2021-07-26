@@ -1,10 +1,8 @@
 package com.yqy.wiki.controller;
 
-import com.yqy.wiki.req.EbookSaveReq;
-import com.yqy.wiki.req.UserQueryReq;
-import com.yqy.wiki.req.UserResetPasswordReq;
-import com.yqy.wiki.req.UserSaveReq;
+import com.yqy.wiki.req.*;
 import com.yqy.wiki.resp.CommonResp;
+import com.yqy.wiki.resp.UserLoginResp;
 import com.yqy.wiki.resp.UserQueryResp;
 import com.yqy.wiki.resp.PageResp;
 import com.yqy.wiki.service.UserService;
@@ -62,6 +60,16 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp commonResp = new CommonResp<>();
         userService.resetPassword(req);
+        return commonResp;
+    }
+
+
+    @PostMapping("/login")
+    public CommonResp resetPassword(@Valid @RequestBody UserLoginReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> commonResp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+        commonResp.setContent(userLoginResp);
         return commonResp;
     }
 }

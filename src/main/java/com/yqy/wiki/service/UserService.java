@@ -7,10 +7,12 @@ import com.yqy.wiki.domain.UserExample;
 import com.yqy.wiki.exception.BusinessException;
 import com.yqy.wiki.exception.BusinessExceptionCode;
 import com.yqy.wiki.mapper.UserMapper;
+import com.yqy.wiki.req.UserLoginReq;
 import com.yqy.wiki.req.UserQueryReq;
 import com.yqy.wiki.req.UserResetPasswordReq;
 import com.yqy.wiki.req.UserSaveReq;
 import com.yqy.wiki.resp.CommonResp;
+import com.yqy.wiki.resp.UserLoginResp;
 import com.yqy.wiki.resp.UserQueryResp;
 import com.yqy.wiki.resp.PageResp;
 import com.yqy.wiki.util.CopyUtil;
@@ -162,8 +164,40 @@ public class UserService {
 
     }
 
+    /**
+     * @author: bahsk
+     * @date: 2021/7/26 21:43
+     * @description: 重置密码
+     * @params: UserResetPasswordReq
+     * @return:
+     */
     public void resetPassword(UserResetPasswordReq req) {
         User user = CopyUtil.copy(req, User.class);
         userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    /**
+     * @author: bahsk
+     * @date: 2021/7/26 21:43
+     * @description: 登录
+     * @params:
+     * @return:
+     */
+    public UserLoginResp login(UserLoginReq req) {
+        User userDB = selectByLoginName(req.getLoginName());
+        if (ObjectUtils.isEmpty(userDB)) {
+            //用户名不存在
+            LOG.info("用户名不存在, {}", req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        } else {
+            if (userDB.getPassword().equals(req.getPassword())) {
+                UserLoginResp userLoginResp = CopyUtil.copy(userDB, UserLoginResp.class);
+                return userLoginResp;
+            } else {
+                LOG.info("密码不对,输入密码, {}, 数据库密码: {}", req.getPassword(), userDB.getPassword());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
+
     }
 }
