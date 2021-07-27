@@ -160,7 +160,14 @@ export default defineComponent({
           page: params.page,
           size: params.size,
           loginName: params.loginName,
+        },
+
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*",
+          "Access-Control-Allow-Headers": "*"
         }
+
       }).then(
           (response) => {
             loading.value = false;

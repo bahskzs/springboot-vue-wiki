@@ -18,12 +18,17 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:9520/wiki/category/list
+GET http://localhost:9520/wiki/category/all
 
 
 ###
-GET http://localhost:9520/wiki/redis/get/name
+GET http://localhost:9520/wiki/redis/get/75154950816141312
 
 ###
 
-GET http://localhost:9520/wiki/redis/set/name/123444
+GET http://localhost:9520/wiki/redis/set/token/75154950816141312
+
+###
+
+
+GET http://localhost:9520/wiki/user/logout/75154950816141312?token=75154950816141312

@@ -11,20 +11,21 @@
         >
           <a-menu-item key="/home">
             <router-link to="/">首页</router-link>
-
+          </a-menu-item>
+          <a-menu-item key="/about" :style="!user.id? {} : {display:'none'}">
+            <router-link to="/about">关于我们</router-link>
           </a-menu-item>
 
-
-          <a-menu-item key="/admin/user">
+          <a-menu-item key="/admin/user" :style="user.id? {} : {display:'none'}">
             <router-link to="/admin/user">用户管理</router-link>
           </a-menu-item>
-          <a-menu-item key="/admin/ebook">
+          <a-menu-item key="/admin/ebook" :style="user.id? {} : {display:'none'}">
             <router-link to="/admin/ebook">电子书管理</router-link>
           </a-menu-item>
-          <a-menu-item key="/admin/category">
+          <a-menu-item key="/admin/category" :style="user.id? {} : {display:'none'}">
             <router-link to="/admin/category">分类管理</router-link>
           </a-menu-item>
-          <a-menu-item key="/about">
+          <a-menu-item key="/about" :style="user.id? {} : {display:'none'}">
             <router-link to="/about">关于我们</router-link>
           </a-menu-item>
 
@@ -32,10 +33,6 @@
         </a-menu>
       </a-col>
       <a-col :span="4">
-        <a class="login-menu" @click="showLoginModal" v-show="!user.id">
-          <span>登录</span>
-        </a>
-
         <a-popconfirm
             title="确认退出登录?"
             ok-text="是"
@@ -43,13 +40,17 @@
             @confirm="logout()"
         >
           <a class="login-menu" v-show="user.id">
-            <span> , 退出登录 </span>
+            <span>退出登录</span>
           </a>
         </a-popconfirm>
-
+        <a class="login-menu" @click="showLoginModal" v-show="!user.id">
+          <span>登录</span>
+        </a>
         <a class="login-menu" v-show="user.id">
           <span>您好 : {{ user.name }}  </span>
         </a>
+
+
       </a-col>
     </a-row>
 
@@ -78,6 +79,7 @@ import {computed, defineComponent, ref} from 'vue';
 import axios from "axios";
 import {message} from "ant-design-vue";
 import store from '@/store';
+import router from '@/router';
 
 declare let hexMd5: any;
 declare let KEY: any;
@@ -87,10 +89,10 @@ export default defineComponent({
   setup() {
     const loginUser = ref({
       loginName: "test",
-      password: "test"
+      password: "test123456"
     });
 
-    const user = computed(() => store.state.user)
+    const user = computed(() => store.state.user);
 
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
@@ -118,20 +120,36 @@ export default defineComponent({
     }
 
     const logout = () => {
-      console.log("退出登录");
+      console.log("退出登录开始");
 
-      axios.get('/user/logout/' + user.value.token).then((response) => {
+      console.log("退出登录1 :", store.state.user);
+      console.log("退出登录2 :", user.value);
+      axios.get('/user/logout/' + user.value.token, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*",
+          "Access-Control-Allow-Headers": "*"
+        }, params: {
+          token: user.value.token
+        }
+      }).then((response) => {
+
         const data = response.data;
         if (data.success) {
           message.success("退出登录成功！");
-          //清空token,为了避免空指针 用空对象而不是null
           store.commit("setUser", {});
+
         } else {
           message.error(data.message);
         }
-      });
 
-    }
+        setTimeout(() => {
+          router.replace("/");
+        }, 500);
+
+
+      });
+    };
 
 
     return {
@@ -152,6 +170,7 @@ export default defineComponent({
 .login-menu {
   float: right !important;
   color: white;
+  padding-left: 10px;
 }
 
 .logo {
@@ -162,10 +181,6 @@ export default defineComponent({
   background: rgba(255, 255, 255, 0.3);
 }
 
-.ant-row-rtl #components-layout-demo-top-side-2 .logo {
-  float: right;
-  margin: 16px 0 16px 24px;
-}
 
 </style>
 

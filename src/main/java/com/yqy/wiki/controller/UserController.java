@@ -39,6 +39,7 @@ public class UserController {
     @Resource
     private UserService userService;
 
+
     @GetMapping("/list")
     //为什么参数是userVO ，输入http://localhost:9520/wiki/user/list?name=Spring name属性也会被识别？
     //Spring会自动将参数映射到类属性
@@ -100,6 +101,5 @@ public class UserController {
         redisTemplate.delete(token);
         LOG.info("从redis中删除token{}", token);
         return resp;
-
     }
 }
