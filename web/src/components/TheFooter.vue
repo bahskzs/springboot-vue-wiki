@@ -1,14 +1,22 @@
 <template>
   <a-layout-footer style="text-align: center">
-    Personal wiki ©2022 Created by bahskzs
+    Personal wiki ©2022 Created by bahskzs <span v-show="user.id">, 欢迎 {{ user.name }}</span>
   </a-layout-footer>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import store from '@/store';
+import {defineComponent, computed} from 'vue';
 
 export default defineComponent({
   name: 'TheFooter',
+  setup() {
+    const user = computed(() => store.state.user)
+
+    return {
+      user
+    }
+  }
 });
 </script>
 
@@ -30,4 +38,6 @@ export default defineComponent({
   background: #fff;
 }
 </style>
+
+
 

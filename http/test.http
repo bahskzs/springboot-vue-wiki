@@ -20,3 +20,10 @@ Content-Type: application/json
 
 GET http://localhost:9520/wiki/category/list
 
+
+###
+GET http://localhost:9520/wiki/redis/get/name
+
+###
+
+GET http://localhost:9520/wiki/redis/set/name/123444

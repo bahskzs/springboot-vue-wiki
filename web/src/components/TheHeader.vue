@@ -1,34 +1,58 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo" />
-    <a-menu
-        theme="dark"
-        mode="horizontal"
-        :style="{ lineHeight: '64px' }"
-    >
-      <a-menu-item key="/home">
-        <router-link to="/">首页</router-link>
+    <div class="logo"/>
+    <a-row>
+      <a-col :span="20">
 
-      </a-menu-item>
+        <a-menu
+            theme="dark"
+            mode="horizontal"
+            :style="{ lineHeight: '64px' }"
+        >
+          <a-menu-item key="/home">
+            <router-link to="/">首页</router-link>
+
+          </a-menu-item>
 
 
-      <a-menu-item key="/admin/user">
-        <router-link to="/admin/user">用户管理</router-link>
-      </a-menu-item>
-      <a-menu-item key="/admin/ebook">
-        <router-link to="/admin/ebook">电子书管理</router-link>
-      </a-menu-item>
-      <a-menu-item key="/admin/category">
-        <router-link to="/admin/category">分类管理</router-link>
-      </a-menu-item>
-      <a-menu-item key="/about">
-        <router-link to="/about">关于我们</router-link>
-      </a-menu-item>
+          <a-menu-item key="/admin/user">
+            <router-link to="/admin/user">用户管理</router-link>
+          </a-menu-item>
+          <a-menu-item key="/admin/ebook">
+            <router-link to="/admin/ebook">电子书管理</router-link>
+          </a-menu-item>
+          <a-menu-item key="/admin/category">
+            <router-link to="/admin/category">分类管理</router-link>
+          </a-menu-item>
+          <a-menu-item key="/about">
+            <router-link to="/about">关于我们</router-link>
+          </a-menu-item>
 
-      <a-menu-item style="float:right;" @click="showLoginModal">
-        <span>登录</span>
-      </a-menu-item>
-    </a-menu>
+
+        </a-menu>
+      </a-col>
+      <a-col :span="4">
+        <a class="login-menu" @click="showLoginModal" v-show="!user.id">
+          <span>登录</span>
+        </a>
+
+        <a-popconfirm
+            title="确认退出登录?"
+            ok-text="是"
+            cancel-text="否"
+            @confirm="logout()"
+        >
+          <a class="login-menu" v-show="user.id">
+            <span> , 退出登录 </span>
+          </a>
+        </a-popconfirm>
+
+        <a class="login-menu" v-show="user.id">
+          <span>您好 : {{ user.name }}  </span>
+        </a>
+      </a-col>
+    </a-row>
+
 
     <a-modal
         title="登录"
@@ -50,9 +74,10 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
+import {computed, defineComponent, ref} from 'vue';
 import axios from "axios";
 import {message} from "ant-design-vue";
+import store from '@/store';
 
 declare let hexMd5: any;
 declare let KEY: any;
@@ -64,6 +89,9 @@ export default defineComponent({
       loginName: "test",
       password: "test"
     });
+
+    const user = computed(() => store.state.user)
+
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
 
@@ -81,6 +109,7 @@ export default defineComponent({
         if (data.success) {
           loginModalVisible.value = false;
           message.success("登录成功！");
+          store.commit("setUser", data.content);
         } else {
           message.error(data.message);
         }
@@ -88,12 +117,32 @@ export default defineComponent({
 
     }
 
+    const logout = () => {
+      console.log("退出登录");
+
+      axios.get('/user/logout/' + user.value.token).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          message.success("退出登录成功！");
+          //清空token,为了避免空指针 用空对象而不是null
+          store.commit("setUser", {});
+        } else {
+          message.error(data.message);
+        }
+      });
+
+    }
+
+
     return {
       loginUser,
       loginModalVisible,
       loginModalLoading,
       showLoginModal,
-      login
+      login,
+
+      user,
+      logout
     }
   }
 });
