@@ -23,7 +23,10 @@
           </template>
           <a-menu-item v-for="child in item.children" :key="child.id">
             <MailOutlined /><span>{{child.name}}</span>
+
           </a-menu-item>
+
+
         </a-sub-menu>
 
 
@@ -41,14 +44,33 @@
       <template #renderItem="{ item }">
         <a-list-item key="item.title">
 
-
+          <template #actions>
+              <span v-bind:="item">
+                <component v-bind:is="'EyeOutlined'" style="margin-right: 8px"/>
+                {{ item.viewCount }}
+              </span>
+            <span v-bind:="item">
+                <component v-bind:is="'LikeOutlined'" style="margin-right: 8px"/>
+                {{ item.voteCount }}
+              </span>
+            <span v-bind:="item">
+                <component v-bind:is="'FolderOpenOutlined'" style="margin-right: 8px"/>
+                {{ item.docCount }}
+              </span>
+          </template>
           <a-list-item-meta :description="item.description">
             <template #title>
               <router-link :to="'/doc?ebookId=' + item.id">{{ item.name }}</router-link>
+
             </template>
-            <template #avatar><a-avatar :src="item.cover" /></template>
+            <template #avatar>
+              <a-avatar :src="item.cover"/>
+            </template>
           </a-list-item-meta>
+
         </a-list-item>
+
+
       </template>
     </a-list>
 
@@ -60,7 +82,14 @@
 
 <script lang="ts">
 import {defineComponent, onMounted, ref} from "vue";
-import {LaptopOutlined, NotificationOutlined, UserOutlined} from "@ant-design/icons-vue";
+import {
+  LikeOutlined,
+  MessageOutlined,
+  StarOutlined,
+  FolderOpenOutlined,
+  UserOutlined,
+  EyeOutlined
+} from "@ant-design/icons-vue";
 import axios from "axios";
 import {Tool} from "@/util/tool";
 import {message} from "ant-design-vue";
@@ -69,9 +98,12 @@ import {message} from "ant-design-vue";
 export default defineComponent({
 
   components: {
+    StarOutlined,
+    LikeOutlined,
+    MessageOutlined,
+    FolderOpenOutlined,
     UserOutlined,
-    LaptopOutlined,
-    NotificationOutlined,
+    EyeOutlined
 
   },
   setup() {
@@ -81,6 +113,10 @@ export default defineComponent({
     const ebooks = ref();
     let categoryId2 = 0;
 
+
+    /*
+    * 列表点击
+    * */
     const handleClick = (value: any) => {
       // console.log("menu click", value)
       if (value.key === 'welcome') {
@@ -109,6 +145,7 @@ export default defineComponent({
             const data = response.data;
             if(data.success) {
               ebooks.value = data.content.list;
+
             }else{
               message.error(data.message);
             }
@@ -136,9 +173,6 @@ export default defineComponent({
     };
 
 
-    // const handleCategoryLevel1 = () => {
-    //
-    // }
 
 
     onMounted(() => {
@@ -147,6 +181,8 @@ export default defineComponent({
       console.log("level1:",level1.value);
 
     });
+
+
     return {
       ebooks,
       level1,
@@ -156,6 +192,7 @@ export default defineComponent({
       selectedKeys2: ref<string[]>(['1']),
       collapsed: ref<boolean>(false),
       openKeys: ref<string[]>(['sub1']),
+
     };
   },
 });
@@ -180,5 +217,11 @@ export default defineComponent({
 
 .site-layout-background {
   background: #fff;
+}
+
+/* 点赞 */
+.vote-div {
+  padding: 15px;
+  text-align: center;
 }
 </style>

@@ -22,3 +22,9 @@ mybatis:
 logging:
   level:
     com.yqy.wiki.mapper: trace
+
+#rocketmq配置
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: default

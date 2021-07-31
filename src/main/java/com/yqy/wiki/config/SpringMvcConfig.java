@@ -30,7 +30,8 @@ public class SpringMvcConfig implements WebMvcConfigurer {
                         "/category/all",
                         "/doc/find-content/**",
                         "/ebook/list",
-                        "/category/**"
+                        "/category/**",
+                        "/doc/**"
                 );
     }
 }

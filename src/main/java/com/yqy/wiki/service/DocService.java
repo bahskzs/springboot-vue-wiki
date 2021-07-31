@@ -5,17 +5,28 @@ import com.github.pagehelper.PageInfo;
 import com.yqy.wiki.domain.Content;
 import com.yqy.wiki.domain.Doc;
 import com.yqy.wiki.domain.DocExample;
+import com.yqy.wiki.exception.BusinessException;
+import com.yqy.wiki.exception.BusinessExceptionCode;
 import com.yqy.wiki.mapper.ContentMapper;
 import com.yqy.wiki.mapper.DocMapper;
+import com.yqy.wiki.mapper.DocMapperCustom;
 import com.yqy.wiki.req.DocQueryReq;
 import com.yqy.wiki.req.DocSaveReq;
 import com.yqy.wiki.resp.DocQueryResp;
 import com.yqy.wiki.resp.CommonResp;
 import com.yqy.wiki.resp.PageResp;
 import com.yqy.wiki.util.CopyUtil;
+import com.yqy.wiki.util.RedisUtil;
+import com.yqy.wiki.util.RequestContext;
 import com.yqy.wiki.util.SnowFlake;
+import com.yqy.wiki.websocket.WebSocketServer;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -31,14 +42,31 @@ import java.util.List;
 @Service
 public class DocService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
+
     @Resource
     private DocMapper docMapper;
+
+    @Resource
+    private DocMapperCustom docMapperCustom;
 
     @Resource
     private ContentMapper contentMapper;
 
     @Resource
     private SnowFlake snowFlake;
+
+    @Resource
+    public RedisUtil redisUtil;
+
+    @Resource
+    private WebSocketServer webSocketServer;
+
+    @Resource
+    private WsService wsService;
+
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
 
     /**
      * @author: bahsk
@@ -107,7 +135,7 @@ public class DocService {
      * @params:
      * @return:
      */
-
+    @Transactional
     public CommonResp save(DocSaveReq docSaveReq) {
         Doc doc = CopyUtil.copy(docSaveReq, Doc.class);
         Content content = CopyUtil.copy(docSaveReq, Content.class);
@@ -116,6 +144,8 @@ public class DocService {
 
         if (ObjectUtils.isEmpty(doc.getId())) {
             doc.setId(snowFlake.nextId());
+            doc.setViewCount(0);
+            doc.setVoteCount(0);
             docMapper.insert(doc);
             content.setId(doc.getId());
             contentMapper.insert(content);
@@ -166,10 +196,44 @@ public class DocService {
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
         //return content.getContent();  直接返回如果没有内容会报空指针异常
+        //文档阅读数 + 1
+        LOG.info("文档阅读数+1");
+        docMapperCustom.increaseViewCountByPrimaryKey(id);
         if (ObjectUtils.isEmpty(content)) {
             return "";
         } else {
             return content.getContent();
         }
+    }
+
+    /**
+     * @author: bahsk
+     * @date: 2021/7/29 16:02
+     * @description: 点赞
+     * @params:
+     * @return:
+     */
+    public void vote(Long id) {
+        String ip = RequestContext.getRemoteAddr();
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 3)) {
+            docMapperCustom.increaseVoteCountByPrimaryKey(id);
+        } else {
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
+
+        //推送点赞的消息
+        // xxx文档被点赞
+        Doc docDB = docMapper.selectByPrimaryKey(id);
+        String logId = MDC.get("LOG_ID");
+        wsService.sendInfo("【" + docDB.getName() + "】文档被点赞!", logId);
+//        rocketMQTemplate.convertAndSend("VOTE_TOPIC","【" + docDB.getName() + "】文档被点赞!");
+
+    }
+
+    /*
+     * 根据文档汇总点赞数，阅读数，文档数到电子书
+     * */
+    public void refreshEbookByDoc() {
+        docMapperCustom.refreshEbookInfo();
     }
 }

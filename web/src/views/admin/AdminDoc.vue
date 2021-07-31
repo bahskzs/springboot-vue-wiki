@@ -278,6 +278,7 @@ export default defineComponent({
       confirmLoading.value = true;
       const content = editor.txt.html();
       console.log("content", content);
+      doc.value.ebookId = route.query.ebookId;
       doc.value.content = content;
       axios.post("/doc/save", doc.value).then((response) => {
         const data = response.data; // data = commonResp

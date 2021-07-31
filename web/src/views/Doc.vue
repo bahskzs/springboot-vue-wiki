@@ -15,7 +15,22 @@
           </a-tree>
         </a-col>
         <a-col :span="18">
+          <div v-if="level1.length != 0">
+            <h2>{{ doc.name }}</h2>
+            <div>
+              <span>阅读数：{{ doc.viewCount }}</span> &nbsp; &nbsp;
+              <span>点赞数：{{ doc.voteCount }}</span>
+            </div>
+            <a-divider style="height: 1px; background-color: #f0f2f5"/>
+          </div>
           <div class="wangeditor" :innerHTML="content"></div>
+          <div class="vote-div" v-if="level1.length != 0">
+            <a-button type="primary" shape="round" :size="'large'" @click="vote">
+              <template #icon>
+                <LikeOutlined/> &nbsp;点赞：{{ doc.voteCount }}
+              </template>
+            </a-button>
+          </div>
         </a-col>
       </a-row>
     </a-layout-content>
@@ -25,7 +40,7 @@
 <script lang="ts">
 import {defineComponent, onMounted, ref, createVNode} from 'vue';
 import axios from 'axios';
-import {message} from 'ant-design-vue';
+import {message, notification} from 'ant-design-vue';
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
 
@@ -44,6 +59,9 @@ export default defineComponent({
     const defaultSelectedKey = ref();
     defaultSelectedKey.value = [];
 
+    const doc = ref();
+    doc.value = {};
+
 
     /**
      * @author: bahsk
@@ -57,6 +75,8 @@ export default defineComponent({
       //点击调用右侧的查询接口
       if (Tool.isNotEmpty(selectedKeys)) {
         handleQueryContent(selectedKeys[0]);
+        // 选中某一节点时，加载该节点的文档信息
+        doc.value = info.selectedNodes[0].props;
         console.log("tree-id:", selectedKeys[0]);
       }
 
@@ -80,6 +100,7 @@ export default defineComponent({
             const data = response.data;
             if (data.success) {
               content.value = data.content;
+
             } else {
               message.error(data.message);
             }
@@ -104,6 +125,7 @@ export default defineComponent({
               if (Tool.isNotEmpty(level1)) {
                 defaultSelectedKey.value = [level1.value[0].id];
                 handleQueryContent(level1.value[0].id);
+                doc.value = level1.value[0];
               }
 
             } else {
@@ -113,6 +135,27 @@ export default defineComponent({
           });
     };
 
+    /*
+    * 点赞
+    * */
+    const vote = () => {
+      axios.get('/doc/vote/' + doc.value.id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          doc.value.voteCount++;
+        } else {
+          // message.error(data.message);
+
+          notification['error']({
+            message: '收到消息',
+            description: '您已点赞过',
+          });
+
+        }
+      });
+    }
+
+
     onMounted(() => {
       handleQuery();
     });
@@ -121,7 +164,9 @@ export default defineComponent({
       content,
       level1,
       onSelect,
-      defaultSelectedKey
+      defaultSelectedKey,
+      doc,
+      vote
 
 
     }

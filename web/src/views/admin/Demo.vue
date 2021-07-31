@@ -1,68 +1,91 @@
 <template>
-  <a-tree-select
-      v-model:value="value"
-      style="width: 100%"
-      :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-      :tree-data="treeData"
-      placeholder="Please select"
-      tree-default-expand-all
-
-  >
-    <template #title="{ key, value }">
-      <span style="color: #08c" v-if="key === '0-0-1'">Child Node1 {{ value }}</span>
+  <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
+    <template #footer>
+      <div>
+        <b>ant design vue</b>
+        footer part
+      </div>
     </template>
-  </a-tree-select>
+    <template #renderItem="{ item }">
+      <a-list-item key="item.title">
+
+        <template #extra>
+          <img
+              width="272"
+              alt="logo"
+              src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+          />
+        </template>
+
+        <a-list-item-meta :description="item.description">
+          <template #title>
+            <a :href="item.href">{{ item.title }}</a>
+          </template>
+          <template #avatar>
+            <a-avatar :src="item.avatar"/>
+          </template>
+        </a-list-item-meta>
+        {{ item.content }}
+        <template #actions>
+          <span v-for="{ type, text } in actions" :key="type">
+            <component v-bind:is="type" style="margin-right: 8px"/>
+            {{ text }}
+          </span>
+        </template>
+        <SmileTwoTone/>
+        {{ item.title }}
+        <template>
+          <span>
+             <component v-bind:is='StarOutlined' style="margin-right: 8px"/>
+             {{ item.title }}
+          </span>
+        </template>
+      </a-list-item>
+
+    </template>
+  </a-list>
 </template>
 <script lang="ts">
-import {defineComponent, ref, watch} from 'vue';
+import {SmileTwoTone, StarOutlined, LikeOutlined, MessageOutlined} from '@ant-design/icons-vue';
+import {defineComponent} from 'vue';
 
-interface TreeDataItem {
-  value: string;
-  key: string;
-  title?: string;
-  slots?: Record<string, string>;
-  children?: TreeDataItem[];
-  disabled?: boolean;
+const listData: Record<string, string>[] = [];
+
+for (let i = 0; i < 23; i++) {
+  listData.push({
+    href: 'https://www.antdv.com/',
+    title: `ant design vue part ${i}`,
+    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+    description:
+        'Ant Design, a design language for background applications, is refined by Ant UED Team.',
+    content:
+        'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+  });
 }
 
-const treeData: TreeDataItem[] = [
-  {
-    title: 'Node1',
-    value: '0-0',
-    key: '0-0',
-    children: [
-      {
-        value: '0-0-1',
-        key: '0-0-1',
-        slots: {
-          title: 'title',
-        },
-
-      },
-      {
-        title: 'Child Node2',
-        value: '0-0-2',
-        key: '0-0-2',
-
-      },
-    ],
-
-  },
-  {
-    title: 'Node2',
-    value: '0-1',
-    key: '0-1',
-  },
-];
 export default defineComponent({
+  components: {
+    SmileTwoTone,
+    StarOutlined,
+    LikeOutlined,
+    MessageOutlined,
+  },
   setup() {
-    const value = ref<string>();
-    value.value = '0-0';
-
-
+    const pagination = {
+      onChange: (page: number) => {
+        console.log(page);
+      },
+      pageSize: 3,
+    };
+    const actions: Record<string, string>[] = [
+      {type: 'StarOutlined', text: '156'},
+      {type: 'LikeOutlined', text: '156'},
+      {type: 'MessageOutlined', text: '2'},
+    ];
     return {
-      value,
-      treeData,
+      listData,
+      pagination,
+      actions,
     };
   },
 });
