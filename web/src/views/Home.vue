@@ -36,7 +36,7 @@
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
       <div class="welcome" v-show="isShowWelcome">
-        <h1>欢迎使用橘猫知识库</h1>
+        <TheWelcome></TheWelcome>
       </div>
       <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
 
@@ -93,6 +93,7 @@ import {
 import axios from "axios";
 import {Tool} from "@/util/tool";
 import {message} from "ant-design-vue";
+import TheWelcome from "@/components/TheWelcome.vue";
 
 
 export default defineComponent({
@@ -100,10 +101,10 @@ export default defineComponent({
   components: {
     StarOutlined,
     LikeOutlined,
-    MessageOutlined,
     FolderOpenOutlined,
     UserOutlined,
-    EyeOutlined
+    EyeOutlined,
+    TheWelcome
 
   },
   setup() {
@@ -164,7 +165,7 @@ export default defineComponent({
               const res = data.content;
               level1.value = [];
               level1.value = Tool.array2Tree(res, 0);
-              console.log("level:",level1.value);
+              level1.value = Tool.array2Tree(res, 0);
             }else {
               message.error(data.message);
             }
@@ -178,7 +179,6 @@ export default defineComponent({
     onMounted(() => {
 
       handleCategoryQuery();
-      console.log("level1:",level1.value);
 
     });
 
@@ -205,13 +205,6 @@ export default defineComponent({
   line-height: 50px;
   border-radius: 8%;
   margin: 5px 0;
-}
-.logo {
-  float: left;
-  width: 120px;
-  height: 31px;
-  margin: 16px 24px 16px 0;
-  background: rgba(255, 255, 255, 0.3);
 }
 
 

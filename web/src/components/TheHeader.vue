@@ -1,6 +1,6 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo"/>
+    <div class="logo">橘猫知识库</div>
     <a-row>
       <a-col :span="20">
 
@@ -128,23 +128,7 @@ export default defineComponent({
         list.value = [];
       }
     }
-    // const list = [
-    //   {
-    //     key: '1',
-    //     title: 'Option 1',
-    //   },
-    //   {
-    //     key: '2',
-    //     title: 'Navigation 2',
-    //     children: [
-    //       {
-    //         key: '2.1',
-    //         title: 'Navigation 3',
-    //         children: [{ key: '2.1.1', title: 'Option 2.1.1' }],
-    //       },
-    //     ],
-    //   },
-    // ];
+
 
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
@@ -229,8 +213,10 @@ export default defineComponent({
   float: left;
   width: 120px;
   height: 31px;
-  margin: 16px 24px 16px 0;
-  background: rgba(255, 255, 255, 0.3);
+  /*margin: 16px 24px 16px 0;*/
+  color: white;
+  font-size: 18px;
+  /*background: rgba(255, 255, 255, 0.3);*/
 }
 
 
