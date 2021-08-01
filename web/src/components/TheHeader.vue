@@ -12,20 +12,28 @@
           <a-menu-item key="/home">
             <router-link to="/">首页</router-link>
           </a-menu-item>
-          <a-menu-item key="/about" :style="!user.id? {} : {display:'none'}">
+          <a-menu-item key="/about" :style="!user.id? '': {display:'none'}">
             <router-link to="/about">关于我们</router-link>
           </a-menu-item>
 
-          <a-menu-item key="/admin/user" :style="user.id? {} : {display:'none'}">
-            <router-link to="/admin/user">用户管理</router-link>
-          </a-menu-item>
-          <a-menu-item key="/admin/ebook" :style="user.id? {} : {display:'none'}">
-            <router-link to="/admin/ebook">电子书管理</router-link>
-          </a-menu-item>
-          <a-menu-item key="/admin/category" :style="user.id? {} : {display:'none'}">
-            <router-link to="/admin/category">分类管理</router-link>
-          </a-menu-item>
-          <a-menu-item key="/about" :style="user.id? {} : {display:'none'}">
+
+          <template v-for="item in list" :key="item.key">
+            <template v-if="!item.children">
+              <a-menu-item :key="item.key">
+                <router-link :to="item.key">{{ item.title }}111</router-link>
+              </a-menu-item>
+            </template>
+          </template>
+          <!--          <a-menu-item key="/admin/user" :style="!!user.id? '' : {display:'none'}">-->
+          <!--            <router-link to="/admin/user">用户管理</router-link>-->
+          <!--          </a-menu-item>-->
+          <!--          <a-menu-item key="/admin/ebook" :style="!!user.id? {} : {display:'none'}">-->
+          <!--            <router-link to="/admin/ebook">电子书管理</router-link>-->
+          <!--          </a-menu-item>-->
+          <!--          <a-menu-item key="/admin/category" :style="!!user.id? {} : {display:'none'}">-->
+          <!--            <router-link to="/admin/category">分类管理</router-link>-->
+          <!--          </a-menu-item>-->
+          <a-menu-item key="/about" :style="!!user.id? {} : {display:'none'}">
             <router-link to="/about">关于我们</router-link>
           </a-menu-item>
 
@@ -83,6 +91,7 @@ import router from '@/router';
 
 declare let hexMd5: any;
 declare let KEY: any;
+//TODO 考虑将现在由于display none导致不显示的菜单改造为动态菜单
 
 export default defineComponent({
   name: 'TheHeader',
@@ -92,7 +101,50 @@ export default defineComponent({
       password: "test123456"
     });
 
+
     const user = computed(() => store.state.user);
+
+    let list = ref();
+    list.value = [];
+
+
+    const onLoadMenu = (user: string) => {
+      if (user) {
+        list.value = [
+          {
+            key: '/admin/user',
+            title: '用户管理'
+          }, {
+            key: '/admin/ebook',
+            title: '电子书管理'
+          }, {
+            key: '/admin/category',
+            title: '分类管理'
+          }
+        ];
+        console.log("userid", user);
+        console.log("list", list.value);
+      } else {
+        list.value = [];
+      }
+    }
+    // const list = [
+    //   {
+    //     key: '1',
+    //     title: 'Option 1',
+    //   },
+    //   {
+    //     key: '2',
+    //     title: 'Navigation 2',
+    //     children: [
+    //       {
+    //         key: '2.1',
+    //         title: 'Navigation 3',
+    //         children: [{ key: '2.1.1', title: 'Option 2.1.1' }],
+    //       },
+    //     ],
+    //   },
+    // ];
 
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
@@ -112,6 +164,7 @@ export default defineComponent({
           loginModalVisible.value = false;
           message.success("登录成功！");
           store.commit("setUser", data.content);
+          onLoadMenu(loginUser.value.loginName);
         } else {
           message.error(data.message);
         }
@@ -122,8 +175,6 @@ export default defineComponent({
     const logout = () => {
       console.log("退出登录开始");
 
-      console.log("退出登录1 :", store.state.user);
-      console.log("退出登录2 :", user.value);
       axios.get('/user/logout/' + user.value.token, {
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -138,6 +189,7 @@ export default defineComponent({
         if (data.success) {
           message.success("退出登录成功！");
           store.commit("setUser", {});
+          onLoadMenu(null);
 
         } else {
           message.error(data.message);
@@ -158,7 +210,7 @@ export default defineComponent({
       loginModalLoading,
       showLoginModal,
       login,
-
+      list,
       user,
       logout
     }

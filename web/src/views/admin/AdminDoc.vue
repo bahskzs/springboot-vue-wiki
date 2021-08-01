@@ -26,7 +26,7 @@
           <template #action="{ record }">
 
       <span>
-        <a-button type="primary" @click="editModal(record)" size="small" shape="square">编辑</a-button>
+        <a-button type="primary" @click="editModal(record)" size="small" shape="round">编辑</a-button>
 
         <a-divider type="vertical"/>
         <a-popconfirm
@@ -35,7 +35,7 @@
             cancel-text="否"
             @confirm="handleDelete(record.id)"
         >
-            <a-button type="danger" size="small" shape="square">删除</a-button>
+            <a-button type="danger" size="small" shape="round">删除</a-button>
           </a-popconfirm>
         </span>
           </template>
